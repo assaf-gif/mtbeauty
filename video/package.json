@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts MTBeautyPromo out/mtbeauty-promo.mp4",
-    "still": "remotion still src/index.ts MTBeautyPromo"
+    "still": "remotion still src/index.ts MTBeautyPromo",
+    "render:nobgm": "remotion render src/index.ts MTBeautyPromo out/mtbeauty-promo-nobgm.mp4 --props=props-nobgm.json"
   },
   "dependencies": {
     "@remotion/cli": "4.0.484",

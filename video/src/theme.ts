@@ -21,13 +21,29 @@ export const FPS = 30;
 export const W = 1080;
 export const H = 1920;
 
-// Shot budget — 570f / 19s. Each window is sized to the shot card's own
-// minimum hold budget; do not compress these without dropping a whole shot.
+// BEAT GRID. The BGM (public/audio/bgm.mp3) is tech-house at 121.75 BPM, so
+// one beat = 60/121.75 * 30 = 14.787 frames. The track is trimmed to enter on
+// its downbeat at 7.990s, which puts the film's beat phase at 0 — beat k lands
+// on frame round(k * 14.787).
+//
+// Every cut below sits on a beat (max error 0.5f, well inside the <=3f the
+// skill's music-beat-sync reference allows). Each window still clears its shot
+// card's own minimum hold budget:
+//   hero  148f - reseat completes at 130, 18f of stillness after
+//   sweep 103f
+//   deal  104f - board full at 59, 45f rest (card wants >=15f)
+//   price 118f - last digit locks at 49, pulse to 57, 61f still (card wants >=45f)
+//   logo  148f - tagline in by 107, 41f hold (>=1s, per the pacing rule)
+// Do not nudge these off the grid to save a few frames.
+export const BPM = 121.75;
+export const BEAT = (30 * 60) / BPM; // 14.787 frames
+export const beat = (k: number) => Math.round(k * BEAT);
+
 export const SHOTS = {
-  hero:  { from: 0,   dur: 139 },
-  sweep: { from: 139, dur: 100 },
-  deal:  { from: 239, dur: 104 },
-  price: { from: 343, dur: 116 },
-  logo:  { from: 459, dur: 120 },
+  hero:  { from: beat(0),  dur: beat(10) - beat(0)  }, // 0   -> 148
+  sweep: { from: beat(10), dur: beat(17) - beat(10) }, // 148 -> 251
+  deal:  { from: beat(17), dur: beat(24) - beat(17) }, // 251 -> 355
+  price: { from: beat(24), dur: beat(32) - beat(24) }, // 355 -> 473
+  logo:  { from: beat(32), dur: beat(42) - beat(32) }, // 473 -> 621
 } as const;
-export const TOTAL = 579; // 19.3s
+export const TOTAL = beat(42); // 621f = 20.7s

@@ -1,17 +1,17 @@
-# MTBeauty promo — vertical (1080×1920, 30fps, 579f / 19.3s)
+# MTBeauty promo — vertical (1080×1920, 30fps, 621f / 20.7s)
 
 Built with the `video-shotcraft` skill. Direction: **אור על זכוכית** — dark
 marble ground, one gold cone, price landing as the payoff.
 
 ## Shots
 
-| # | frames | card | reference implementation |
-|---|--------|------|--------------------------|
-| 1 | 0–138 | `spotlight-hero-card` | `demos/opening/spotlight-hero-card/SpotlightHeroCard.tsx` |
-| 2 | 139–238 | `spotlight-sweep-moves` | `demos/effects/spotlight-sweep-moves/SlideSpotlightPan.tsx` |
-| 3 | 239–342 | `deck-deal-flyin` | `demos/ui-entrance/deck-deal-flyin/DeckDealFlyin.tsx` |
-| 4 | 343–458 | `odometer-digit-roll` | `demos/data/odometer-digit-roll/OdometerDigitRoll.tsx` |
-| 5 | 459–578 | `logo-shrink-wordmark-lockup` | `demos/outro/logo-shrink-wordmark-lockup/LogoShrinkWordmarkLockup.tsx` |
+| # | frames | beat | card | reference implementation |
+|---|--------|------|------|--------------------------|
+| 1 | 0–147 | 0 | `spotlight-hero-card` | `demos/opening/spotlight-hero-card/SpotlightHeroCard.tsx` |
+| 2 | 148–250 | 10 | `spotlight-sweep-moves` | `demos/effects/spotlight-sweep-moves/SlideSpotlightPan.tsx` |
+| 3 | 251–354 | 17 | `deck-deal-flyin` | `demos/ui-entrance/deck-deal-flyin/DeckDealFlyin.tsx` |
+| 4 | 355–472 | 24 | `odometer-digit-roll` | `demos/data/odometer-digit-roll/OdometerDigitRoll.tsx` |
+| 5 | 473–620 | 32 | `logo-shrink-wordmark-lockup` | `demos/outro/logo-shrink-wordmark-lockup/LogoShrinkWordmarkLockup.tsx` |
 
 Tuned timing values are copied from those demos, not re-derived. Comments in
 each shot file mark which numbers are load-bearing.
@@ -64,6 +64,39 @@ instead — which is how a light sweep turns into a bright rectangle. Clip a
 second copy of the artwork with `clip-path` instead: the copy carries the
 product's own alpha, so the effect can only land on the product.
 
+## Sound
+
+BGM is `bgm-tech-house.mp3` from the skill library, trimmed to the 21.5s the
+film needs. It is **not** taken from 0:00: the track ramps from -23 dB to full
+over its first 16 seconds, so starting at zero would put the film's energy peak
+(the card deal) on the track's weakest bar. It enters at **7.990s**, which is
+both a downbeat and the point where full energy arrives on the deal.
+
+That entry also sets the film's beat phase to 0, which is why `theme.ts` can
+express every cut as `beat(k)`.
+
+Analysis: 121.75 BPM, one beat = 14.787 frames. Every cut lands within 0.5
+frames of a beat.
+
+### Cue trimming
+
+Several library cues are far longer than the beat they mark — `impact-cine-big`
+is 8 seconds, `riser-cine` and `swoosh-slow` are over 5. Untrimmed they bleed
+across cuts, and the two `impact-cine-big` hits overlap each other. Each cue
+therefore carries a `dur` and fades over its final 7 frames so the truncation
+does not click. If you add a cue, check its natural length against the shot it
+sits in.
+
+### Two deliverables
+
+```bash
+npm run render          # with BGM
+npm run render:nobgm    # SFX only, same timeline
+```
+
+The music-free version exists so the film can be re-scored in an editor without
+losing the sound design.
+
 ## Commands
 
 ```bash
@@ -81,9 +114,11 @@ npx remotion render src/index.ts MTBeautyPromo out/promo.mp4 \
 
 ## Still open
 
-- **No sound design yet.** SFX selection and BGM are the next stage; a
-  beat-driven track means cut timing has to be re-fitted to the beat grid
-  before the timeline is locked.
+- **Picture is not locked.** The SFX table is pinned to specific frames; if
+  shot boundaries move, the whole table has to be re-pinned.
 - **No horizontal cut.** Vertical only so far.
+- BGM licensing: the track ships with the skill under a free-commercial
+  licence, but the library's own notes say its Mixkit provenance can no longer
+  be traced per-track. Worth re-checking before a paid campaign.
 - Shot 4's ₪25 is arithmetic on the published "4 בשמים ב-100 ש״ח" bundle. If
   that offer changes, the number and the line above it both have to change.

@@ -11,6 +11,6 @@ export const RemotionRoot: React.FC = () => (
     fps={FPS}
     width={W}
     height={H}
-    defaultProps={{ assets: { hero: 'brand/cobra-bottle.png' } }}
+    defaultProps={{ assets: { hero: 'brand/cobra-bottle.png' }, bgm: true }}
   />
 );
