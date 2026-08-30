@@ -24,26 +24,25 @@ export const H = 1920;
 // BEAT GRID. The BGM (public/audio/bgm.mp3) is tech-house at 121.75 BPM, so
 // one beat = 60/121.75 * 30 = 14.787 frames. The track is trimmed to enter on
 // its downbeat at 7.990s, which puts the film's beat phase at 0 — beat k lands
-// on frame round(k * 14.787).
-//
-// Every cut below sits on a beat (max error 0.5f, well inside the <=3f the
-// skill's music-beat-sync reference allows). Each window still clears its shot
-// card's own minimum hold budget:
-//   hero  148f - reseat completes at 130, 18f of stillness after
-//   sweep 103f
-//   deal  104f - board full at 59, 45f rest (card wants >=15f)
-//   price 118f - last digit locks at 49, pulse to 57, 61f still (card wants >=45f)
-//   logo  148f - tagline in by 107, 41f hold (>=1s, per the pacing rule)
-// Do not nudge these off the grid to save a few frames.
+// on frame round(k * 14.787). Every cut sits on a beat (max error 0.5f).
 export const BPM = 121.75;
 export const BEAT = (30 * 60) / BPM; // 14.787 frames
 export const beat = (k: number) => Math.round(k * BEAT);
 
+// Seven shots, 33.5s. The first cut ran five shots in 20s and read as a product
+// film with no one in it — the note back was "not professional, too short, no
+// man or woman". Perfume is sold through people, and the brand's own bundle
+// creatives already contain a woman's hand and a man's hand spraying, which the
+// first pass cropped out. They open the film now, and the arc is:
+//   desire (her) -> the object -> desire (him) -> the range -> the offer ->
+//   the price -> the brand
 export const SHOTS = {
-  hero:  { from: beat(0),  dur: beat(10) - beat(0)  }, // 0   -> 148
-  sweep: { from: beat(10), dur: beat(17) - beat(10) }, // 148 -> 251
-  deal:  { from: beat(17), dur: beat(24) - beat(17) }, // 251 -> 355
-  price: { from: beat(24), dur: beat(32) - beat(24) }, // 355 -> 473
-  logo:  { from: beat(32), dur: beat(42) - beat(32) }, // 473 -> 621
+  sprayHer: { from: beat(0),  dur: beat(8)  - beat(0)  }, //   0 -> 118
+  hero:     { from: beat(8),  dur: beat(20) - beat(8)  }, // 118 -> 296
+  sprayHim: { from: beat(20), dur: beat(27) - beat(20) }, // 296 -> 399
+  range:    { from: beat(27), dur: beat(37) - beat(27) }, // 399 -> 547
+  offer:    { from: beat(37), dur: beat(47) - beat(37) }, // 547 -> 695
+  price:    { from: beat(47), dur: beat(57) - beat(47) }, // 695 -> 843
+  logo:     { from: beat(57), dur: beat(68) - beat(57) }, // 843 -> 1006
 } as const;
-export const TOTAL = beat(42); // 621f = 20.7s
+export const TOTAL = beat(68); // 1006f = 33.5s

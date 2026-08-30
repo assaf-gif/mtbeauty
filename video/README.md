@@ -1,20 +1,42 @@
-# MTBeauty promo — vertical (1080×1920, 30fps, 621f / 20.7s)
+# MTBeauty promo — vertical (1080×1920, 30fps, 1005f / 33.5s)
 
 Built with the `video-shotcraft` skill. Direction: **אור על זכוכית** — dark
 marble ground, one gold cone, price landing as the payoff.
 
 ## Shots
 
-| # | frames | beat | card | reference implementation |
-|---|--------|------|------|--------------------------|
-| 1 | 0–147 | 0 | `spotlight-hero-card` | `demos/opening/spotlight-hero-card/SpotlightHeroCard.tsx` |
-| 2 | 148–250 | 10 | `spotlight-sweep-moves` | `demos/effects/spotlight-sweep-moves/SlideSpotlightPan.tsx` |
-| 3 | 251–354 | 17 | `deck-deal-flyin` | `demos/ui-entrance/deck-deal-flyin/DeckDealFlyin.tsx` |
-| 4 | 355–472 | 24 | `odometer-digit-roll` | `demos/data/odometer-digit-roll/OdometerDigitRoll.tsx` |
-| 5 | 473–620 | 32 | `logo-shrink-wordmark-lockup` | `demos/outro/logo-shrink-wordmark-lockup/LogoShrinkWordmarkLockup.tsx` |
+| # | frames | beat | shot | source |
+|---|--------|------|------|--------|
+| 1 | 0–117 | 0 | spray, her | `spray-her.png` + `Plate` |
+| 2 | 118–295 | 8 | the bottle | `spotlight-hero-card` → `demos/opening/spotlight-hero-card/SpotlightHeroCard.tsx` |
+| 3 | 296–398 | 20 | spray, him | `spray-him.png` + `Plate` |
+| 4 | 399–546 | 27 | the range | `spotlight-sweep-moves` → `demos/effects/spotlight-sweep-moves/SlideSpotlightPan.tsx` |
+| 5 | 547–694 | 37 | the offer | `plate-four.png` + `Plate` |
+| 6 | 695–842 | 47 | the price | `odometer-digit-roll` → `demos/data/odometer-digit-roll/OdometerDigitRoll.tsx` |
+| 7 | 843–1004 | 57 | the brand | `logo-shrink-wordmark-lockup` → `demos/outro/logo-shrink-wordmark-lockup/LogoShrinkWordmarkLockup.tsx` |
 
-Tuned timing values are copied from those demos, not re-derived. Comments in
-each shot file mark which numbers are load-bearing.
+Tuned timing values inside the card-based shots are copied from those demos,
+not re-derived. Comments in each shot file mark which numbers are load-bearing.
+
+### Why there are people in it
+
+The first cut ran five shots in 20s with nothing but product, and came back as
+"not professional, too short, no man or woman". Perfume is sold through people,
+and the brand's own bundle creatives already contain a woman's hand and a man's
+hand spraying — the first pass had cropped them out chasing a clean product
+plate. They now open the film and re-enter at shot 3.
+
+The `deck-deal-flyin` shot was cut entirely. It dealt the brand's own marketing
+banners as cards, which is an advertisement for advertisements; the offer beat
+now shows the bottles instead.
+
+### Cropping the spray plates
+
+The source creatives carry a baked Hebrew headline at x .22–.78, y .05–.28.
+Both hands sit outside that box, so each plate is a tall column taken from one
+edge — which is also the aspect a 1080×1920 frame wants. Do not try to mask the
+type out by colour: the whole image is warm and gold, so a gold-detection mask
+takes the hands and bottles with it and leaves the type ghosted.
 
 ## Assets
 
