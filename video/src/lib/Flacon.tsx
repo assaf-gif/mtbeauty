@@ -21,21 +21,20 @@ export const FLACON_H = 470;
 export const Flacon: React.FC<FlaconProps> = ({ src, w = FLACON_W, glow = 1, style }) => {
   const s = w / FLACON_W;
   if (src) {
+    // The rim light is a drop-shadow ON the image, not an overlay layer.
+    // An overlay has to be masked to the alpha to avoid painting the cut-out's
+    // bounding box, and mask-image on a <div> proved unreliable under the
+    // headless renderer; drop-shadow follows the alpha by definition.
     return (
       <div style={{ position: 'relative', width: w, ...style }}>
         <Img
           src={staticFile(src)}
           style={{
             width: w, display: 'block',
-            filter: `drop-shadow(0 ${26 * s}px ${44 * s}px rgba(0,0,0,.6))`,
-          }}
-        />
-        {/* warm edge light so a cut-out sits in the same room as the stage */}
-        <div
-          style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.5 * glow,
-            background: `linear-gradient(96deg, rgba(255,255,255,.16) 0%, transparent 22%, transparent 78%, rgba(232,188,94,.28) 100%)`,
-            mixBlendMode: 'screen',
+            filter:
+              `drop-shadow(0 ${26 * s}px ${44 * s}px rgba(0,0,0,.62)) ` +
+              `drop-shadow(${3 * s}px 0 ${7 * s}px rgba(217,178,91,${0.34 * glow})) ` +
+              `drop-shadow(${-2 * s}px 0 ${5 * s}px rgba(255,255,255,${0.16 * glow}))`,
           }}
         />
       </div>
@@ -105,6 +104,20 @@ export const Flacon: React.FC<FlaconProps> = ({ src, w = FLACON_W, glow = 1, sty
     </div>
   );
 };
+
+// Clip an effect layer to the product's silhouette. Any soft-edged overlay
+// (light sweeps, glows) drawn inside a cut-out's box and clipped with
+// overflow:hidden gets its falloff sliced into a hard rectangle — which is
+// exactly what a "light sweep" must never look like.
+export const silhouette = (src?: string): React.CSSProperties =>
+  src
+    ? {
+        WebkitMaskImage: `url("${staticFile(src)}")`,
+        maskImage: `url("${staticFile(src)}")`,
+        WebkitMaskSize: '100% 100%', maskSize: '100% 100%',
+        WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+      }
+    : { overflow: 'hidden' };
 
 // Contact shadow — sold separately so shots can fade it as the bottle lifts.
 export const Contact: React.FC<{ w: number; opacity?: number }> = ({ w, opacity = 1 }) => (

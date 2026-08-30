@@ -14,7 +14,7 @@
 // laps are expressed as a vertical specular sweep across the glass — identical
 // metaphor (scan / inspect), identical timing, correct for a physical object.
 import React from 'react';
-import { AbsoluteFill, interpolate, Easing, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Img, staticFile, interpolate, Easing, useCurrentFrame } from 'remotion';
 import { Stage } from '../lib/Stage';
 import { Flacon, Contact } from '../lib/Flacon';
 import { Caption } from '../lib/Caption';
@@ -100,34 +100,21 @@ export const S1Hero: React.FC<{ src?: string }> = ({ src }) => {
           }}
         >
           <div style={{ position: 'relative', transform: `translateY(${y}px) scale(${press})` }}>
-            <Flacon src={src} w={BOTTLE_W} glow={0.55 + 0.45 * lift} />
-            {/* the sweep band, clipped to the bottle box */}
-            {sweepP >= 0 ? (
-              <div
+            <Flacon src={src} w={BOTTLE_W} glow={0.55 + 0.45 * lift + trail} />
+            {/* Two-lap light sweep. A masked overlay div does NOT work here:
+                mask-image on a <div> is not honoured by the headless renderer,
+                so the effect painted the cut-out's bounding box as a bright
+                rectangle. Instead a brightened COPY of the artwork is clipped
+                to a travelling horizontal band — the copy carries the product's
+                own alpha, so the light can only land on the glass. */}
+            {sweepP >= 0 && src ? (
+              <Img
+                src={staticFile(src)}
                 style={{
-                  position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
-                  mixBlendMode: 'screen',
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute', top: `${sweepP * 118 - 12}%`, left: '-14%',
-                    width: '128%', height: '26%',
-                    background:
-                      'linear-gradient(180deg, transparent, rgba(255,248,232,.55) 44%, rgba(232,188,94,.34) 60%, transparent)',
-                    filter: 'blur(22px)', opacity: sweepStrength,
-                    transform: 'rotate(-4deg)',
-                  }}
-                />
-              </div>
-            ) : null}
-            {/* lingering warm edge after the second lap */}
-            {trail > 0.01 ? (
-              <div
-                style={{
-                  position: 'absolute', inset: 0, pointerEvents: 'none', opacity: trail,
-                  background: 'linear-gradient(96deg, transparent 78%, rgba(232,188,94,.5) 100%)',
-                  mixBlendMode: 'screen',
+                  position: 'absolute', left: 0, top: 0, width: BOTTLE_W, display: 'block',
+                  filter: `brightness(${1 + 1.05 * sweepStrength}) saturate(1.15) contrast(1.05)`,
+                  clipPath: `inset(${Math.max(0, sweepP * 116 - 14)}% 0 ${Math.max(0, 100 - sweepP * 116)}% 0)`,
+                  pointerEvents: 'none',
                 }}
               />
             ) : null}

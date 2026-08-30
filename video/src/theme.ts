@@ -1,4 +1,4 @@
-// Design tokens extracted from mtbeauty.co.il (hero, bundle cards, product grid).
+// Design tokens for mtbeauty.co.il.
 // Gold = the site's accent: logo "MT", CTA button, "מבצע" badge, section rule,
 // "הוספה לסל". Ground = the bundle-card product photography (dark marble + one
 // warm spot). Exact values get re-sampled from computed styles once the site is
@@ -6,9 +6,12 @@
 export const T = {
   ground: '#14100C',
   groundDeep: '#0B0906',
-  gold: '#C9A227',
-  goldBright: '#E8BC5E',
-  goldDeep: '#B57C22',
+  // Measured from the brand's own logo SVG (brand/mtb-logo-footer.svg), not
+  // eyeballed off screenshots: the wordmark's gold is a gradient running
+  // #96702a → #d19741 → #d4a34c → #d9b25b.
+  gold: '#d19741',
+  goldBright: '#d9b25b',
+  goldDeep: '#96702a',
   cream: '#F4EDE1',
   muted: '#9C8A70',
   strike: '#665A4C',

@@ -7,12 +7,12 @@ import { S3Deal } from './shots/S3Deal';
 import { S4Price } from './shots/S4Price';
 import { S5Logo } from './shots/S5Logo';
 
-// Real cut-outs drop into public/brand/ and get named here. Until then every
-// shot falls back to its CSS stand-in — nothing else in the film changes.
+// Assets live in public/brand/. Each shot has a sensible default, so passing
+// nothing renders the real film; override here to swap products.
 export type Assets = {
-  hero?: string;
-  sweep?: (string | undefined)[];
-  cartons?: (string | undefined)[];
+  hero?: string;    // cut-out pack shot for S1
+  plate?: string;   // bundle plate swept in S2
+  cards?: string[]; // offer creatives dealt in S3
 };
 
 export const Main: React.FC<{ assets?: Assets }> = ({ assets = {} }) => (
@@ -21,10 +21,10 @@ export const Main: React.FC<{ assets?: Assets }> = ({ assets = {} }) => (
       <S1Hero src={assets.hero} />
     </Sequence>
     <Sequence from={SHOTS.sweep.from} durationInFrames={SHOTS.sweep.dur}>
-      <S2Sweep srcs={assets.sweep} />
+      <S2Sweep plate={assets.plate} />
     </Sequence>
     <Sequence from={SHOTS.deal.from} durationInFrames={SHOTS.deal.dur}>
-      <S3Deal srcs={assets.cartons} />
+      <S3Deal cards={assets.cards} />
     </Sequence>
     <Sequence from={SHOTS.price.from} durationInFrames={SHOTS.price.dur}>
       <S4Price />
