@@ -10,8 +10,15 @@
 //   speed-gated ghost copies at ±ROW/2, opacity .25/.12, gate over speed .06→.5
 //   after the last lock: colour pulse + 1.035 micro-scale over 8f
 //   then FULL STILLNESS ≥45f
-// Two digits here (99), so locks land at 42 and 49, pulse 49→57, and the shot
-// holds still from 75 to 116 — 41f... see NOTE below.
+// Two digits (25), so locks land at 42 and 49, the pulse runs 49→57 and the
+// shot holds still from 70 to 116 — 46f, clearing the card's ≥45f minimum.
+//
+// THE NUMBER: ₪25 is arithmetic on MTBeauty's own published bundle offer,
+// "4 בשמים 30 מ״ל ב-100 ש״ח" — 100 / 4 = 25. It is shown with its derivation
+// on screen so the claim is checkable. This replaces an earlier ₪1,250 → ₪99
+// comparison that paired two prices that never appear together on the site;
+// an unverifiable number is exactly what draws an ad complaint, and there is
+// no need for one when the real offer divides this well.
 import React from 'react';
 import { AbsoluteFill, interpolate, interpolateColors, Easing, useCurrentFrame } from 'remotion';
 import { Stage } from '../lib/Stage';
@@ -22,10 +29,10 @@ import { fontFamily as mont } from '@remotion/google-fonts/Montserrat';
 export const S4_DUR = 116;
 
 const ROW = 260;
-const DW = 158;
+const DW = 138;
 const FS = 236;
 const SPIN = 0.85;
-const DIGITS = [9, 9];
+const DIGITS = [2, 5];
 
 const posAt = (f: number, i: number): number => {
   const d = DIGITS[i];
@@ -99,9 +106,6 @@ export const S4Price: React.FC = () => {
   const oldIn = interpolate(frame, [6, 18], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const strike = interpolate(frame, [16, 30], [0, 1], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(0.3, 0, 0.2, 1),
-  });
   const labelOp = interpolate(frame, [LOCK + 3, LOCK + 21], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad),
   });
@@ -110,26 +114,32 @@ export const S4Price: React.FC = () => {
     <AbsoluteFill>
       <Stage spotX={50} spotY={34} poolR={560} vignette={0.5}>
         <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center', fontFamily: heebo }}>
-          {/* struck-through reference price — the site's own most repeated motif */}
-          <div style={{ position: 'relative', opacity: oldIn, marginBottom: 26 }}>
-            <div style={{ fontSize: 62, fontWeight: 400, color: T.strike, direction: 'ltr', fontFamily: mont }}>
-              ₪1,250
-            </div>
-            <div
-              style={{
-                position: 'absolute', left: 0, top: '52%', height: 4, background: T.strike,
-                width: `${strike * 100}%`, transformOrigin: 'left center',
-              }}
-            />
+          {/* the offer this number comes from, so the maths is visible */}
+          <div
+            style={{
+              opacity: oldIn, marginBottom: 30, direction: 'rtl',
+              fontSize: 52, fontWeight: 700, color: T.muted,
+              transform: `translateY(${(1 - oldIn) * 12}px)`,
+            }}
+          >
+            4 בשמים ב־100 ₪
           </div>
 
           <div
             style={{
               display: 'flex', direction: 'ltr', alignItems: 'flex-start',
-              transform: `scale(${pulseScale})`,
-              filter: `drop-shadow(0 12px 46px ${glow})`,
+              transform: `scale(${pulseScale})`, position: 'relative',
             }}
           >
+            {/* glow sits BEHIND the reels: a drop-shadow on the row silhouettes
+                the opaque digit boxes as a dark rounded rectangle. */}
+            <div
+              style={{
+                position: 'absolute', inset: '-18% -12%', borderRadius: '50%',
+                background: `radial-gradient(50% 50%, ${glow}, transparent 70%)`,
+                filter: 'blur(30px)', pointerEvents: 'none',
+              }}
+            />
             <Reel frame={frame} i={0} />
             <Reel frame={frame} i={1} />
             <div
@@ -145,7 +155,8 @@ export const S4Price: React.FC = () => {
           </div>
 
           <div style={{ marginTop: 34, opacity: labelOp, direction: 'rtl', textAlign: 'center' }}>
-            <div style={{ fontSize: 44, fontWeight: 700, color: T.cream }}>100 מ״ל</div>
+            <div style={{ fontSize: 46, fontWeight: 700, color: T.cream }}>לבושם</div>
+            <div style={{ fontSize: 34, fontWeight: 300, color: T.muted, marginTop: 10 }}>30 מ״ל</div>
           </div>
         </AbsoluteFill>
       </Stage>
