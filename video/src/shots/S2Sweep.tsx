@@ -12,12 +12,18 @@
 import React from 'react';
 import { AbsoluteFill, Img, staticFile, interpolate, Easing, useCurrentFrame } from 'remotion';
 import { Stage } from '../lib/Stage';
+import { T } from '../theme';
 import { Caption } from '../lib/Caption';
 
 export const S2_DUR = 100;
 
 const PLATE = 'brand/plate-b100.png';
-const FLOOR = 0.18; // never fully black: some form has to stay readable
+// The knock-down floor cannot go so low that the plate's own black background
+// falls BELOW the stage ground it sits on — at 0.18 it reached rgb(2,2,0)
+// against a rgb(25,19,13) ground, and the plate's rectangle edge became
+// visible as a seam. 0.30 keeps them in the same family; the ground-coloured
+// falloffs below hide what is left of the boundary.
+const FLOOR = 0.30;
 
 export const S2Sweep: React.FC<{ plate?: string }> = ({ plate = PLATE }) => {
   const frame = useCurrentFrame();
@@ -58,6 +64,24 @@ export const S2Sweep: React.FC<{ plate?: string }> = ({ plate = PLATE }) => {
                   `radial-gradient(38% 62% at ${head}% 50%, #000 0%, rgba(0,0,0,.55) 46%, transparent 78%)`,
                 maskImage:
                   `radial-gradient(38% 62% at ${head}% 50%, #000 0%, rgba(0,0,0,.55) 46%, transparent 78%)`,
+              }}
+            />
+            {/* Ground-coloured falloff top and bottom. A landscape plate in a
+                vertical frame always leaves a horizontal edge; painting the
+                fade (rather than masking it) is what works here, since
+                mask-image on a div is ignored by the headless renderer. */}
+            <div
+              style={{
+                position: 'absolute', left: 0, right: 0, top: -1, height: '26%',
+                background: `linear-gradient(180deg, ${T.ground} 0%, rgba(20,16,12,.92) 22%, rgba(20,16,12,0) 100%)`,
+                pointerEvents: 'none',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute', left: 0, right: 0, bottom: -1, height: '30%',
+                background: `linear-gradient(0deg, ${T.ground} 0%, rgba(20,16,12,.92) 22%, rgba(20,16,12,0) 100%)`,
+                pointerEvents: 'none',
               }}
             />
             {/* warm bloom riding just ahead of the head */}
